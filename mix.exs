@@ -1,12 +1,12 @@
 defmodule Deep.MixProject do
   use Mix.Project
 
-  @version "0.1.0"
+  @version "0.2.0"
 
   def project do
     [
       app: :deep,
-      version: "0.1.0",
+      version: @version,
       elixir: "~> 1.7",
       name: "Deep",
       source_url: "https://github.com/schultzer/deep",
@@ -15,7 +15,6 @@ defmodule Deep.MixProject do
       package: package(),
       deps: deps(),
       docs: docs()
-
     ]
   end
 
