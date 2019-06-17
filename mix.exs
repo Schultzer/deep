@@ -27,8 +27,8 @@ defmodule Deep.MixProject do
 
   defp deps do
     [
-      {:benchee,     "~> 0.13.1", only: :dev},
-      {:deep_merge, "~> 0.2.0", only: :dev}
+      {:benchee,     "~> 1.0.1", only: :dev},
+      {:deep_merge, "~> 1.0", only: :dev}
     ]
   end
 
