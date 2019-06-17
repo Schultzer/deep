@@ -124,9 +124,51 @@ defmodule Deep do
   defp merge_value([{_, _} | _] = left, []),                                        do: left
   defp merge_value(_left, [{_, _} | _] = right),                                    do: right
   defp merge_value([{_, _} | _], right),                                            do: right
-  defp merge_value(left, right) when is_list(left) and is_list(right),              do: left ++ right
+  defp merge_value(left, right) when is_list(left) and is_list(right),              do: shallow_merge(left, right)
   defp merge_value(_left, right),                                                   do: right
 
   defp update([{_, _} | _] = acc, key, value), do: Keyword.update(acc, key, value, &merge_value(value, &1))
   defp update(acc, key, value),                do: Map.update(acc, key, value, &merge_value(value, &1))
+
+  defp shallow_merge(left, right) do
+    shallow_merge(Enum.sort(left), Enum.sort(right), [])
+  end
+
+  defp shallow_merge([], [], acc), do: acc
+  defp shallow_merge([same | left], [] = right, [same | _] = acc) do
+    shallow_merge(left, right, acc)
+  end
+  defp shallow_merge([] = left, [same | right], [same | _] = acc) do
+    shallow_merge(left, right, acc)
+  end
+  defp shallow_merge([l | left], [] = right, acc) do
+    case l in acc do
+      true  -> shallow_merge(left, right, acc)
+
+      false -> shallow_merge(left, right, [l | acc])
+    end
+  end
+  defp shallow_merge([] = left, [r | right], acc) do
+    case r in acc do
+      true  -> shallow_merge(left, right, acc)
+
+      false -> shallow_merge(left, right, [r | acc])
+    end
+  end
+  defp shallow_merge([same | left], [same | right], [same | _] = acc) do
+    shallow_merge(left, right, acc)
+  end
+  defp shallow_merge([l | left], [same | right], [same | _] = acc) do
+    shallow_merge(left, right, [l | acc])
+  end
+  defp shallow_merge([same | left], [r | right], [same | _] = acc) do
+    shallow_merge(left, right, [r | acc])
+  end
+
+  defp shallow_merge([same | left], [same | right], acc) do
+    shallow_merge(left, right, [same | acc])
+  end
+  defp shallow_merge([l | left], [r | right], acc) do
+    shallow_merge(left, right, [l, r | acc])
+  end
 end
